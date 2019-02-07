@@ -11,41 +11,50 @@ var (
 )
 
 type NsqProducerInfo struct {
-	producer *nsq.Producer
+	producer []*nsq.Producer
 	addrs    []string
 	index    int
 }
 
 func SetupProducer(addrs []string) {
+	if len(addrs) == 0 {
+		return
+	}
 	nsqprod = &NsqProducerInfo{
-		addrs: addrs,
-		index: 0,
+		addrs:    addrs,
+		index:    0,
+		producer: make([]*nsq.Producer, len(addrs)),
 	}
 }
 
 func PublishMsg(topic string, val interface{}) error {
-	if nsqprod.producer == nil {
-		nsqprod.index++
-		if nsqprod.index >= len(nsqprod.addrs) {
-			nsqprod.index = 0
-		}
-
-		config := nsq.NewConfig()
-		w, err := nsq.NewProducer(nsqprod.addrs[nsqprod.index], config)
-		if err != nil {
-			return err
-		}
-		nsqprod.producer = w
-	}
-
 	data, err := json.Marshal(val)
 	if err != nil {
 		return err
 	}
 
-	if err := nsqprod.producer.Publish(topic, data); err != nil {
-		nsqprod.producer.Stop()
-		nsqprod.producer = nil
+	defer func() {
+		nsqprod.index++
+		if nsqprod.index >= len(nsqprod.addrs) {
+			nsqprod.index = 0
+		}
+	}()
+
+	index := nsqprod.index
+	producer := nsqprod.producer[index]
+	if producer == nil {
+		config := nsq.NewConfig()
+		w, err := nsq.NewProducer(nsqprod.addrs[index], config)
+		if err != nil {
+			return err
+		}
+		producer = w
+		nsqprod.producer[index] = producer
+	}
+
+	if err := producer.Publish(topic, data); err != nil {
+		nsqprod.producer[index].Stop()
+		nsqprod.producer[index] = nil
 		return err
 	}
 
