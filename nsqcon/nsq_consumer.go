@@ -22,7 +22,7 @@ func (*ConsumerT) HandleMessage(msg *nsq.Message) error {
 
 func SetupConsumer(topic string, channel string, address string, msgchan chan []byte) {
 	cfg := nsq.NewConfig()
-	cfg.LookupdPollInterval = time.Second * 3
+	cfg.LookupdPollInterval = time.Second
 	c, err := nsq.NewConsumer(topic, channel, cfg)
 	if err != nil {
 		panic(err)
@@ -30,7 +30,10 @@ func SetupConsumer(topic string, channel string, address string, msgchan chan []
 
 	c.SetLogger(nil, 0)
 	c.AddHandler(&ConsumerT{})
-	if err := c.ConnectToNSQLookupd(address); err != nil {
+	// if err := c.ConnectToNSQLookupd(address); err != nil {
+	// 	panic(err)
+	// }
+	if err := c.ConnectToNSQD(address); err != nil {
 		panic(err)
 	}
 

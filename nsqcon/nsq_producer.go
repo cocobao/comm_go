@@ -3,6 +3,7 @@ package nsqcon
 import (
 	"encoding/json"
 
+	"github.com/cocobao/log"
 	nsq "github.com/nsqio/go-nsq"
 )
 
@@ -33,13 +34,6 @@ func PublishMsg(topic string, val interface{}) error {
 		return err
 	}
 
-	defer func() {
-		nsqprod.index++
-		if nsqprod.index >= len(nsqprod.addrs) {
-			nsqprod.index = 0
-		}
-	}()
-
 	index := nsqprod.index
 	producer := nsqprod.producer[index]
 	if producer == nil {
@@ -50,11 +44,16 @@ func PublishMsg(topic string, val interface{}) error {
 		}
 		producer = w
 		nsqprod.producer[index] = producer
+		log.Debug("new nsq productor ok")
 	}
 
 	if err := producer.Publish(topic, data); err != nil {
 		nsqprod.producer[index].Stop()
 		nsqprod.producer[index] = nil
+		// nsqprod.index++
+		// if nsqprod.index >= len(nsqprod.addrs) {
+		// 	nsqprod.index = 0
+		// }
 		return err
 	}
 
