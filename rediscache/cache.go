@@ -13,6 +13,18 @@ func SetRedisClient(c *redis.ClusterClient) {
 	redisClient = c
 }
 
+func IncrBy(key string, value int64) error {
+	return redisClient.IncrBy(key, value).Err()
+}
+
+func TTL(key string) (time.Duration, error) {
+	return redisClient.TTL(key).Result()
+}
+
+func CacheIsExist(key string) bool {
+	return redisClient.Exists(key).Val()
+}
+
 func CacheSet(key string, val interface{}, timeOut time.Duration) error {
 	data, err := json.Marshal(val)
 	if err != nil {
