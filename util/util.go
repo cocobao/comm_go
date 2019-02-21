@@ -1,6 +1,8 @@
 package util
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
 	"net"
 	"runtime"
@@ -30,4 +32,19 @@ func GetLocalIPAddr() string {
 		}
 	}
 	return ""
+}
+
+func Md5(str string) string {
+	h := md5.New()
+	b := []byte(str)
+	h.Write(b)
+	return hex.EncodeToString(h.Sum(nil))
+}
+
+func NowT() string {
+	return time.Now().Format("2006-01-02T15:04:05-07:00")
+}
+
+func NowDate() string {
+	return time.Now().Format("0102")
 }

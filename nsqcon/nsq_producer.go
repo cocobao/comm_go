@@ -1,8 +1,6 @@
 package nsqcon
 
 import (
-	"encoding/json"
-
 	"github.com/cocobao/log"
 	nsq "github.com/nsqio/go-nsq"
 )
@@ -28,12 +26,7 @@ func SetupProducer(addrs []string) {
 	}
 }
 
-func PublishMsg(topic string, val interface{}) error {
-	data, err := json.Marshal(val)
-	if err != nil {
-		return err
-	}
-
+func PublishMsg(topic string, data []byte) error {
 	index := nsqprod.index
 	producer := nsqprod.producer[index]
 	if producer == nil {

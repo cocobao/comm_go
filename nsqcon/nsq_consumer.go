@@ -3,7 +3,6 @@ package nsqcon
 import (
 	"time"
 
-	"github.com/cocobao/log"
 	nsq "github.com/nsqio/go-nsq"
 )
 
@@ -15,7 +14,7 @@ var (
 type ConsumerT struct{}
 
 func (*ConsumerT) HandleMessage(msg *nsq.Message) error {
-	log.Debug("receive:", msg.NSQDAddress, ", message:", string(msg.Body))
+	// log.Debug("receive:", msg.NSQDAddress, ", message:", string(msg.Body))
 	handleChan <- msg.Body
 	return nil
 }
