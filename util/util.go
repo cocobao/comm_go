@@ -41,10 +41,20 @@ func Md5(str string) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
+func Md5StringByNowTime() string {
+	md5Ctx := md5.New()
+	md5Ctx.Write([]byte(time.Now().String()))
+	return hex.EncodeToString(md5Ctx.Sum(nil))
+}
+
 func NowT() string {
 	return time.Now().Format("2006-01-02T15:04:05-07:00")
 }
 
 func NowDate() string {
 	return time.Now().Format("0102")
+}
+
+func NowDateName() string {
+	return time.Now().Format("20060102150405")
 }
