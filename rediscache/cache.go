@@ -41,6 +41,14 @@ func CacheGet(key string, val interface{}) error {
 	return json.Unmarshal([]byte(data), &val)
 }
 
+func Set(key string, val interface{}, timeOut time.Duration) error {
+	return redisClient.Set(key, val, timeOut).Err()
+}
+
+func Get(key string) (string, error) {
+	return redisClient.Get(key).Result()
+}
+
 func CacheDel(key string) error {
 	return redisClient.Del(key).Err()
 }
