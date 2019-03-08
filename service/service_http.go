@@ -16,13 +16,26 @@ import (
 
 var (
 	index = 0
+
+	httpServs map[string]*HttpServiceInfo
 )
 
+func init() {
+	httpServs = make(map[string]*HttpServiceInfo, 3)
+}
+
 func HttpService(serviceName string) *HttpServiceInfo {
+	if v, ok := httpServs[serviceName]; ok {
+		return v
+	}
+
 	s := &HttpServiceInfo{
 		ServiceName: serviceName,
 	}
+
 	s.LoadServiceAddrs()
+	etcd.GetEtcdService().Watch(serviceName, s.watchCall)
+	httpServs[serviceName] = s
 	return s
 }
 
@@ -35,6 +48,11 @@ type AddrInfo struct {
 type HttpServiceInfo struct {
 	ServiceName  string
 	ServiceAddrs []AddrInfo
+}
+
+func (s *HttpServiceInfo) watchCall(t int, k string, v string) bool {
+	s.LoadServiceAddrs()
+	return true
 }
 
 func (s *HttpServiceInfo) LoadServiceAddrs() error {
