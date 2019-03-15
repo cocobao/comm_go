@@ -89,6 +89,9 @@ func (s *HttpServiceInfo) LoadServiceAddrs() error {
 }
 
 func (s *HttpServiceInfo) Get(url string, result interface{}) (int, error) {
+	if len(s.ServiceAddrs) == 0 {
+		return -1, fmt.Errorf("no service addr")
+	}
 	var req *http.Request
 	var res *http.Response
 	var err error
