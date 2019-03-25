@@ -62,3 +62,7 @@ func NowN() string {
 func NowDateName() string {
 	return time.Now().Format("20060102150405")
 }
+
+func NowDateTime() string {
+	return time.Now().Format("01-02 15:04:05")
+}
