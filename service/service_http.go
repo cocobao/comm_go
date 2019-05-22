@@ -114,9 +114,9 @@ tryAgain:
 
 	req.Header.Set("Content-Type", "application/json")
 
-	ctxto, cancel := context.WithTimeout(ctx, 3*time.Second)
+	ctxto, cancel := context.WithTimeout(ctx, 10*time.Second)
 	res, err = ctxhttp.Do(ctxto, client, req)
-	cancel()
+	defer cancel()
 	if err != nil {
 		log.Warn("push post err:", err, tryTime)
 		select {
@@ -187,7 +187,7 @@ tryAgain:
 
 	req.Header.Set("Content-Type", "application/json")
 
-	ctxto, cancel := context.WithTimeout(ctx, 3*time.Second)
+	ctxto, cancel := context.WithTimeout(ctx, 10*time.Second)
 	res, err = ctxhttp.Do(ctxto, client, req)
 	cancel()
 	if err != nil {

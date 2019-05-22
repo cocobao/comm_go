@@ -29,12 +29,12 @@ func SetupConsumer(topic string, channel string, address string, msgchan chan []
 
 	c.SetLogger(nil, 0)
 	c.AddHandler(&ConsumerT{})
-	// if err := c.ConnectToNSQLookupd(address); err != nil {
-	// 	panic(err)
-	// }
-	if err := c.ConnectToNSQD(address); err != nil {
+	if err := c.ConnectToNSQLookupd(address); err != nil {
 		panic(err)
 	}
+	// if err := c.ConnectToNSQD(address); err != nil {
+	// 	panic(err)
+	// }
 
 	nsqConsumer = c
 	handleChan = msgchan
